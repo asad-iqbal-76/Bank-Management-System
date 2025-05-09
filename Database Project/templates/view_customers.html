@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>View Customers</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="p-5">
+    <h2>All Customers</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr><th>Name</th><th>Email</th><th>Total Accounts</th></tr>
+        </thead>
+        <tbody>
+        {% for cust in customers %}
+            <tr>
+                <td>{{ cust[0] }}</td>
+                <td>{{ cust[1] }}</td>
+                <td>{{ cust[2] }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

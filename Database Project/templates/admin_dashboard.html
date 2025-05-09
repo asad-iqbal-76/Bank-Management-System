@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Bank Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold">Admin Dashboard</h1>
+            <div>
+                <a href="{{ url_for('menu') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mr-2">Back to Menu</a>
+                <a href="{{ url_for('logout') }}" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Logout</a>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="mb-4 p-2 text-center text-white {% if category == 'danger' %}bg-red-500{% else %}bg-blue-500{% endif %} rounded">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Admin Overview -->
+        <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+            <h2 class="text-2xl font-semibold mb-4">Bank Overview</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="p-4 bg-blue-100 rounded">
+                    <p class="text-lg font-medium">Total Customers</p>
+                    <p class="text-2xl">{{ overview['Total_Customers'] }}</p>
+                </div>
+                <div class="p-4 bg-green-100 rounded">
+                    <p class="text-lg font-medium">Total Accounts</p>
+                    <p class="text-2xl">{{ overview['Total_Accounts'] }}</p>
+                </div>
+                <div class="p-4 bg-yellow-100 rounded">
+                    <p class="text-lg font-medium">Total Transactions</p>
+                    <p class="text-2xl">{{ overview['Total_Transactions'] }}</p>
+                </div>
+                <div class="p-4 bg-purple-100 rounded">
+                    <p class="text-lg font-medium">Total Balance</p>
+                    <p class="text-2xl">${{ overview['Total_Balance'] | float | round(2) }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manage Accounts -->
+        <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+            <h2 class="text-2xl font-semibold mb-4">Manage Accounts</h2>
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-2 border">Account ID</th>
+                        <th class="p-2 border">Customer</th>
+                        <th class="p-2 border">Balance</th>
+                        <th class="p-2 border">Type</th>
+                        <th class="p-2 border">Status</th>
+                        <th class="p-2 border">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in accounts %}
+                        <tr>
+                            <td class="p-2 border">{{ account['account_id'] }}</td>
+                            <td class="p-2 border">{{ account['customer_name'] }}</td>
+                            <td class="p-2 border">${{ account['balance'] | float | round(2) }}</td>
+                            <td class="p-2 border">{{ account['account_type'] }}</td>
+                            <td class="p-2 border">{{ account['status'] }}</td>
+                            <td class="p-2 border">
+                                {% if account['status'] == 'Active' %}
+                                    <a href="{{ url_for('freeze_account', account_id=account['account_id'], action='freeze') }}" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Freeze</a>
+                                {% else %}
+                                    <a href="{{ url_for('freeze_account', account_id=account['account_id'], action='unfreeze') }}" class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">Unfreeze</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Manage Loans (NEW) -->
+        <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+            <h2 class="text-2xl font-semibold mb-4">Manage Loans</h2>
+            <div class="mb-4">
+                <a href="{{ url_for('add_loan') }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mr-2">Add Loan</a>
+                <a href="{{ url_for('view_loans') }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">View All Loans</a>
+            </div>
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-2 border">Loan ID</th>
+                        <th class="p-2 border">Customer</th>
+                        <th class="p-2 border">Amount</th>
+                        <th class="p-2 border">Status</th>
+                        <th class="p-2 border">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for loan in loans %}
+                        <tr>
+                            <td class="p-2 border">{{ loan['loan_id'] }}</td>
+                            <td class="p-2 border">{{ loan['customer_name'] }}</td>
+                            <td class="p-2 border">${{ loan['amount'] | float | round(2) }}</td>
+                            <td class="p-2 border">{{ loan['status'] }}</td>
+                            <td class="p-2 border">
+                                {% if loan['status'] != 'Approved' %}
+                                    <a href="{{ url_for('update_loan', loan_id=loan['loan_id'], action='approve') }}" class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600">Approve</a>
+                                {% else %}
+                                    <span class="text-gray-500">Approved</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-semibold mb-4">Recent Transactions</h2>
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="p-2 border">Transaction ID</th>
+                        <th class="p-2 border">Account ID</th>
+                        <th class="p-2 border">Customer</th>
+                        <th class="p-2 border">Amount</th>
+                        <th class="p-2 border">Type</th>
+                        <th class="p-2 border">Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                        <tr>
+                            <td class="p-2 border">{{ transaction['transaction_id'] }}</td>
+                            <td class="p-2 border">{{ transaction['account_id'] }}</td>
+                            <td class="p-2 border">{{ transaction['customer_name'] }}</td>
+                            <td class="p-2 border">${{ transaction['amount'] | float | round(2) }}</td>
+                            <td class="p-2 border">{{ transaction['type'] }}</td>
+                            <td class="p-2 border">{{ transaction['transaction_time'] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</body>
+</html>

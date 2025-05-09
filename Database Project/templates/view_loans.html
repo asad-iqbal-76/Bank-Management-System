@@ -1,0 +1,29 @@
+<!-- Assuming this is inside your table where loans are displayed -->
+<table>
+    <thead>
+      <tr>
+        <th>Loan ID</th>
+        <th>Customer ID</th>
+        <th>Loan Amount</th>
+        <th>Interest Rate</th>
+        <th>Loan Interest</th>
+        <th>Status</th>
+        
+        <th>Created At</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for loan in loans %}
+        <tr>
+          <td>{{ loan['loan_id'] }}</td>
+          <td>{{ loan['customer_id'] }}</td>
+          <td>${{ loan['loan_amount'] | float | round(2) }}</td>
+          <td>{{ loan['interest_rate'] }}%</td>
+          <td>${{ loan['loan_interest'] | float | round(2) }}</td> <!-- Displaying the calculated interest -->
+          <td>{{ loan['status'] }}</td>
+          <td>{{ loan['created_at'] }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  

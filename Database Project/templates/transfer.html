@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Transfer Money</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="p-5">
+    <h2>Transfer Money</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{category}}">{{message}}</div>
+      {% endfor %}
+    {% endwith %}
+    <form method="POST">
+        <div class="mb-3">
+            <label>From Account ID:</label>
+            <input type="number" name="from_account" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label>To Account ID:</label>
+            <input type="number" name="to_account" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label>Amount:</label>
+            <input type="number" name="amount" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-success">Transfer</button>
+    </form>
+</body>
+</html>
